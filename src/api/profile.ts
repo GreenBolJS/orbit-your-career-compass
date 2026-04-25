@@ -8,3 +8,7 @@ export async function getProfile(): Promise<Profile> {
 export async function saveProfile(data: Partial<Profile>): Promise<void> {
   return api.post('/profile', data);
 }
+
+export async function resetProfile(): Promise<void> {
+  return api.delete('/profile');
+}

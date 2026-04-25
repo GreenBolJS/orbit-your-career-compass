@@ -10,6 +10,8 @@ import {
   setDismissed,
   type Settings,
 } from "@/lib/storage";
+import { clearMatches } from "@/api/matches";
+import { resetProfile } from "@/api/profile";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/settings")({
@@ -120,19 +122,32 @@ function SettingsPage() {
           </div>
           <div className="mt-3 flex flex-wrap gap-3">
             <button
-              onClick={() => {
-                setDismissed([]);
-                flash("All matches restored");
+              onClick={async () => {
+                try {
+                  await clearMatches();
+                  setDismissed([]);
+                  flash("All matches cleared");
+                  setTimeout(() => navigate({ to: "/dashboard/matches" }), 600);
+                } catch (err) {
+                  console.error("Failed to clear matches:", err);
+                  flash("Failed to clear matches");
+                }
               }}
               className="rounded-md border border-destructive/50 bg-transparent px-4 py-2 text-sm text-destructive interactive-glow hover:bg-destructive/10"
             >
               Clear all matches
             </button>
             <button
-              onClick={() => {
-                resetAll();
-                flash("Profile reset");
-                setTimeout(() => navigate({ to: "/" }), 600);
+              onClick={async () => {
+                try {
+                  await resetProfile();
+                  resetAll();
+                  flash("Profile reset");
+                  setTimeout(() => navigate({ to: "/" }), 600);
+                } catch (err) {
+                  console.error("Failed to reset profile:", err);
+                  flash("Failed to reset profile");
+                }
               }}
               className="rounded-md border border-destructive/50 bg-transparent px-4 py-2 text-sm text-destructive interactive-glow hover:bg-destructive/10"
             >
